@@ -19,7 +19,7 @@ public class UnitMovement : MonoBehaviour
     {
         if (isMoving)
         {
-            // Поворот к цели
+            // Поворот к цели -
             Vector3 direction = (targetPosition - transform.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
