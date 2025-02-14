@@ -1,41 +1,40 @@
 using UnityEngine;
-using UnityEngine.AI; // Не забудьте добавить это пространство имен для работы с NavMeshAgent
+using UnityEngine.AI;
 
 public class UnitMovement : MonoBehaviour
 {
-    public float stopDistance = 0.5f; // Расстояние, на котором юнит остановится перед целью
-
     private NavMeshAgent agent;
-    private Vector3 targetPosition;
-    private bool isMoving = false;
 
     void Start()
     {
         // Получаем компонент NavMeshAgent
         agent = GetComponent<NavMeshAgent>();
 
-        // Настраиваем остановочное расстояние
-        agent.stoppingDistance = stopDistance;
+        // Проверяем, что NavMeshAgent активен и находится на NavMesh
+        if (agent == null || !agent.isActiveAndEnabled)
+        {
+            Debug.LogWarning("NavMeshAgent is missing or not active on unit.");
+        }
     }
 
     public void MoveTo(Vector3 position)
     {
-        targetPosition = position;
-        isMoving = true;
-
-        // Устанавливаем цель для NavMeshAgent
-        agent.SetDestination(targetPosition);
-    }
-
-    void Update()
-    {
-        if (isMoving)
+        if (agent != null && agent.isActiveAndEnabled)
         {
-            // Проверка достижения цели
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+            // Проверяем, доступна ли целевая позиция на NavMesh
+            if (NavMesh.SamplePosition(position, out NavMeshHit navHit, 1.0f, NavMesh.AllAreas))
             {
-                isMoving = false;
+                // Устанавливаем целевую позицию для NavMeshAgent
+                agent.SetDestination(navHit.position);
             }
+            else
+            {
+                Debug.LogWarning("Target position is not reachable on NavMesh.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("NavMeshAgent component is missing or not active on unit.");
         }
     }
 }

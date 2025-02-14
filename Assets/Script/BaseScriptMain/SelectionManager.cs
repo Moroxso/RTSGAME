@@ -48,9 +48,9 @@ public class SelectionManager : MonoBehaviour
                 }
                 else
                 {
-                        // Добавляем объект в список выделенных
-                        SelectObject(clickedObject);
-                    selectedUnits.Add(clickedObject);                  
+                    // Добавляем объект в список выделенных
+                    SelectObject(clickedObject);
+                    selectedUnits.Add(clickedObject);
                 }
             }
         }
@@ -67,11 +67,11 @@ public class SelectionManager : MonoBehaviour
                     float angle = i * (2f * Mathf.PI / selectedUnits.Count); // Равномерное распределение по кругу
                     Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
 
-                    // Получаем компонент UnitMovement у юнита
-                    UnitMovement unitMovement = selectedUnits[i].GetComponent<UnitMovement>();
+                    // Получаем компонент NavMeshAgent у юнита
+                    NavMeshAgent agent = selectedUnits[i].GetComponent<NavMeshAgent>();
 
-                    // Проверяем, есть ли компонент UnitMovement
-                    if (unitMovement != null)
+                    // Проверяем, есть ли компонент NavMeshAgent и активен ли он
+                    if (agent != null && agent.isActiveAndEnabled)
                     {
                         // Вычисляем целевую позицию с учетом смещения
                         Vector3 targetPosition = hit.point + offset;
@@ -79,8 +79,8 @@ public class SelectionManager : MonoBehaviour
                         // Проверяем, доступна ли целевая позиция на NavMesh
                         if (NavMesh.SamplePosition(targetPosition, out NavMeshHit navHit, radius, NavMesh.AllAreas))
                         {
-                            // Перемещаем юнита на корректную позицию на NavMesh
-                            unitMovement.MoveTo(navHit.position);
+                            // Устанавливаем целевую позицию для NavMeshAgent
+                            agent.SetDestination(navHit.position);
                         }
                         else
                         {
@@ -89,15 +89,14 @@ public class SelectionManager : MonoBehaviour
                     }
                     else
                     {
-                        Debug.LogWarning("UnitMovement component is missing on selected unit.");
+                        Debug.LogWarning("NavMeshAgent component is missing or not active on selected unit.");
                     }
                 }
             }
         }
-
     }
 
-        void SelectUnitsInRectangle()
+    void SelectUnitsInRectangle()
     {
         Vector3 mouseEndPosition = Input.mousePosition;
         Rect selectionRect = new Rect(mouseStartPosition.x, Screen.height - mouseStartPosition.y,
