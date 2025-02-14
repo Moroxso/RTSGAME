@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System.Collections.Generic;
 
 public class SelectionManager : MonoBehaviour
@@ -9,27 +10,27 @@ public class SelectionManager : MonoBehaviour
 
     void Update()
     {
-        // Начало выделения области
+        // РќР°С‡Р°Р»Рѕ РІС‹РґРµР»РµРЅРёСЏ РѕР±Р»Р°СЃС‚Рё
         if (Input.GetMouseButtonDown(0))
         {
             isSelecting = true;
             mouseStartPosition = Input.mousePosition;
 
-            // Если не зажата клавиша Ctrl или Shift, снимаем выделение со всех объектов
+            // Р•СЃР»Рё РЅРµ Р·Р°Р¶Р°С‚Р° РєР»Р°РІРёС€Р° Ctrl РёР»Рё Shift, СЃРЅРёРјР°РµРј РІС‹РґРµР»РµРЅРёРµ СЃРѕ РІСЃРµС… РѕР±СЉРµРєС‚РѕРІ
             if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.LeftShift))
             {
                 DeselectAllObjects();
             }
         }
 
-        // Завершение выделения области
+        // Р—Р°РІРµСЂС€РµРЅРёРµ РІС‹РґРµР»РµРЅРёСЏ РѕР±Р»Р°СЃС‚Рё
         if (Input.GetMouseButtonUp(0))
         {
             isSelecting = false;
             SelectUnitsInRectangle();
         }
 
-        // Выделение одиночного объекта при клике
+        // Р’С‹РґРµР»РµРЅРёРµ РѕРґРёРЅРѕС‡РЅРѕРіРѕ РѕР±СЉРµРєС‚Р° РїСЂРё РєР»РёРєРµ
         if (Input.GetMouseButtonDown(0) && !isSelecting)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -39,7 +40,7 @@ public class SelectionManager : MonoBehaviour
             {
                 GameObject clickedObject = hit.collider.gameObject;
 
-                // Если объект уже выделен, снимаем выделение
+                // Р•СЃР»Рё РѕР±СЉРµРєС‚ СѓР¶Рµ РІС‹РґРµР»РµРЅ, СЃРЅРёРјР°РµРј РІС‹РґРµР»РµРЅРёРµ
                 if (selectedUnits.Contains(clickedObject))
                 {
                     DeselectObject(clickedObject);
@@ -47,7 +48,7 @@ public class SelectionManager : MonoBehaviour
                 }
                 else
                 {
-                        // Добавляем объект в список выделенных
+                        // Р”РѕР±Р°РІР»СЏРµРј РѕР±СЉРµРєС‚ РІ СЃРїРёСЃРѕРє РІС‹РґРµР»РµРЅРЅС‹С…
                         SelectObject(clickedObject);
                     selectedUnits.Add(clickedObject);                  
                 }
@@ -59,12 +60,37 @@ public class SelectionManager : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
             {
-                float radius = 2f;
+                float radius = 2f; // Р Р°РґРёСѓСЃ РґР»СЏ СЂР°СЃСЃС‚Р°РЅРѕРІРєРё СЋРЅРёС‚РѕРІ РІРѕРєСЂСѓРі С‚РѕС‡РєРё
                 for (int i = 0; i < selectedUnits.Count; i++)
                 {
-                    float angle = i * (1.5f * Mathf.PI / selectedUnits.Count);
+                    // Р’С‹С‡РёСЃР»СЏРµРј СѓРіРѕР» РґР»СЏ РєР°Р¶РґРѕРіРѕ СЋРЅРёС‚Р°
+                    float angle = i * (2f * Mathf.PI / selectedUnits.Count); // Р Р°РІРЅРѕРјРµСЂРЅРѕРµ СЂР°СЃРїСЂРµРґРµР»РµРЅРёРµ РїРѕ РєСЂСѓРіСѓ
                     Vector3 offset = new Vector3(Mathf.Cos(angle), 0, Mathf.Sin(angle)) * radius;
-                    selectedUnits[i].GetComponent<UnitMovement>().MoveTo(hit.point + offset);
+
+                    // РџРѕР»СѓС‡Р°РµРј РєРѕРјРїРѕРЅРµРЅС‚ UnitMovement Сѓ СЋРЅРёС‚Р°
+                    UnitMovement unitMovement = selectedUnits[i].GetComponent<UnitMovement>();
+
+                    // РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё РєРѕРјРїРѕРЅРµРЅС‚ UnitMovement
+                    if (unitMovement != null)
+                    {
+                        // Р’С‹С‡РёСЃР»СЏРµРј С†РµР»РµРІСѓСЋ РїРѕР·РёС†РёСЋ СЃ СѓС‡РµС‚РѕРј СЃРјРµС‰РµРЅРёСЏ
+                        Vector3 targetPosition = hit.point + offset;
+
+                        // РџСЂРѕРІРµСЂСЏРµРј, РґРѕСЃС‚СѓРїРЅР° Р»Рё С†РµР»РµРІР°СЏ РїРѕР·РёС†РёСЏ РЅР° NavMesh
+                        if (NavMesh.SamplePosition(targetPosition, out NavMeshHit navHit, radius, NavMesh.AllAreas))
+                        {
+                            // РџРµСЂРµРјРµС‰Р°РµРј СЋРЅРёС‚Р° РЅР° РєРѕСЂСЂРµРєС‚РЅСѓСЋ РїРѕР·РёС†РёСЋ РЅР° NavMesh
+                            unitMovement.MoveTo(navHit.position);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("Target position is not reachable on NavMesh.");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning("UnitMovement component is missing on selected unit.");
+                    }
                 }
             }
         }
@@ -100,7 +126,7 @@ public class SelectionManager : MonoBehaviour
 
     void SelectObject(GameObject obj)
     {
-        // Пример изменения цвета объекта при выделении
+        // РџСЂРёРјРµСЂ РёР·РјРµРЅРµРЅРёСЏ С†РІРµС‚Р° РѕР±СЉРµРєС‚Р° РїСЂРё РІС‹РґРµР»РµРЅРёРё
         Renderer renderer = obj.GetComponent<Renderer>();
         if (renderer != null)
         {
@@ -110,7 +136,7 @@ public class SelectionManager : MonoBehaviour
 
     void DeselectObject(GameObject obj)
     {
-        // Возвращаем объекту исходный цвет
+        // Р’РѕР·РІСЂР°С‰Р°РµРј РѕР±СЉРµРєС‚Сѓ РёСЃС…РѕРґРЅС‹Р№ С†РІРµС‚
         Renderer renderer = obj.GetComponent<Renderer>();
         if (renderer != null)
         {
@@ -131,7 +157,7 @@ public class SelectionManager : MonoBehaviour
     {
         if (isSelecting)
         {
-            // Рисуем прямоугольник выделения
+            // Р РёСЃСѓРµРј РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РІС‹РґРµР»РµРЅРёСЏ
             Rect rect = GetScreenRect(mouseStartPosition, Input.mousePosition);
             DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
             DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
@@ -140,11 +166,11 @@ public class SelectionManager : MonoBehaviour
 
     Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)
     {
-        // Переворачиваем Y координаты
+        // РџРµСЂРµРІРѕСЂР°С‡РёРІР°РµРј Y РєРѕРѕСЂРґРёРЅР°С‚С‹
         screenPosition1.y = Screen.height - screenPosition1.y;
         screenPosition2.y = Screen.height - screenPosition2.y;
 
-        // Вычисляем углы прямоугольника
+        // Р’С‹С‡РёСЃР»СЏРµРј СѓРіР»С‹ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°
         Vector3 topLeft = Vector3.Min(screenPosition1, screenPosition2);
         Vector3 bottomRight = Vector3.Max(screenPosition1, screenPosition2);
 
@@ -160,13 +186,13 @@ public class SelectionManager : MonoBehaviour
 
     void DrawScreenRectBorder(Rect rect, float thickness, Color color)
     {
-        // Верхняя линия
+        // Р’РµСЂС…РЅСЏСЏ Р»РёРЅРёСЏ
         DrawScreenRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
-        // Нижняя линия
+        // РќРёР¶РЅСЏСЏ Р»РёРЅРёСЏ
         DrawScreenRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
-        // Левая линия
+        // Р›РµРІР°СЏ Р»РёРЅРёСЏ
         DrawScreenRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
-        // Правая линия
+        // РџСЂР°РІР°СЏ Р»РёРЅРёСЏ
         DrawScreenRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
     }
 }
