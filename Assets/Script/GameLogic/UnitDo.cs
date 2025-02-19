@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UnitDo : MonoBehaviour
 {
-    [SerializeField] public TMP_Text ScoreText;
     [SerializeField] public TMP_Text HPbar;
     [SerializeField] public TMP_Text Name;
     [SerializeField] private double hp = 15;
@@ -16,10 +15,10 @@ public class UnitDo : MonoBehaviour
     [SerializeField] private int team_id = 1;
     private float lastAttackTime = 0f;
     private string unit_name = string.Empty;
-    private int treecount = 0;
-    private bool CanDoDamage = false;
+    public bool CanDoDamage = false;
     private UnitDo targetUnit;
     private SelectionManager selectionManager;
+    private ObjectLogic objectlogic;
 
     private void Start()
     {
@@ -33,6 +32,9 @@ public class UnitDo : MonoBehaviour
     {
         switch (id_unit)
         {
+            case 0:
+                unit_name = "Рабочий";
+                break;
             case 1:
                 unit_name = "Рыцарь";
                 break;
@@ -52,9 +54,9 @@ public class UnitDo : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Tree"))
         {
-            other.gameObject.SetActive(false);
-            treecount++;
-            UpdataScoreText();
+            objectlogic = other.GetComponent<ObjectLogic>();
+
+            CanDoDamage = true;
         }
 
         if (other.gameObject.CompareTag("Unit"))
@@ -70,6 +72,11 @@ public class UnitDo : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
+        if (other.gameObject.CompareTag("Tree"))
+        {
+            CanDoDamage = false;
+        }
+
         if (other.gameObject.CompareTag("Unit"))
         {
             CanDoDamage = false;
@@ -85,6 +92,12 @@ public class UnitDo : MonoBehaviour
             Debug.Log(targetUnit.hp);
             lastAttackTime = Time.time; // Обновляем время последней атаки
         }
+
+        if (CanDoDamage && objectlogic != null && Time.time - lastAttackTime >= attackInterval)
+        {
+            objectlogic.TakeDamage(damage);
+            lastAttackTime = Time.time; 
+        }
     }
 
     public void TakeDamage(double damage)
@@ -99,12 +112,6 @@ public class UnitDo : MonoBehaviour
             UpdateHPBar();
         }
     }
-
-    void UpdataScoreText()
-    {
-        ScoreText.text = Convert.ToString(treecount);
-    }
-
     void UpdateHPBar()
     {
         HPbar.text = Convert.ToString(this.hp) + "/15";
