@@ -7,6 +7,7 @@ public class UnitDo : MonoBehaviour
     [SerializeField] public TMP_Text HPbar;
     [SerializeField] public TMP_Text Name;
     [SerializeField] private double hp = 15;
+    [SerializeField] private double maxhp = 15;
     [SerializeField] private double damage = 0.2;
     [SerializeField] private int id_unit = 1;
     [SerializeField] public GameObject SelectObject;
@@ -15,7 +16,8 @@ public class UnitDo : MonoBehaviour
     [SerializeField] private int team_id = 1;
     private float lastAttackTime = 0f;
     private string unit_name = string.Empty;
-    public bool CanDoDamage = false;
+    private bool CanDoDamage = false;
+    private bool CanDoHeath = false;
     private UnitDo targetUnit;
     private SelectionManager selectionManager;
     private ObjectLogic objectlogic;
@@ -63,9 +65,15 @@ public class UnitDo : MonoBehaviour
         {      
             targetUnit = other.GetComponent<UnitDo>();
 
-            if (targetUnit.team_id != team_id)
+            if (targetUnit.team_id != this.team_id)
             {
                 CanDoDamage = true;
+            }
+
+            if (targetUnit.team_id == this.team_id || this.id_unit == 3 || targetUnit.hp != targetUnit.maxhp)
+            {
+                //Механика целителя
+                CanDoHeath = true;
             }
         }
     }
@@ -80,17 +88,29 @@ public class UnitDo : MonoBehaviour
         if (other.gameObject.CompareTag("Unit"))
         {
             CanDoDamage = false;
+            CanDoHeath = false;
         }
     }
 
     private void FixedUpdate()
     {
+        if (targetUnit == null && CanDoDamage == true)
+        {
+            CanDoDamage = false;
+        }
+
         if (CanDoDamage && targetUnit != null && Time.time - lastAttackTime >= attackInterval)
         {
             targetUnit.TakeDamage(damage);
             Debug.Log(hp);
             Debug.Log(targetUnit.hp);
             lastAttackTime = Time.time; // Обновляем время последней атаки
+        }
+
+        if (CanDoHeath &&  targetUnit != null && Time.time - lastAttackTime >= attackInterval)
+        {
+            targetUnit.TakeHeath(damage);
+            lastAttackTime = Time.time;
         }
 
         if (CanDoDamage && objectlogic != null && Time.time - lastAttackTime >= attackInterval)
@@ -112,9 +132,23 @@ public class UnitDo : MonoBehaviour
             UpdateHPBar();
         }
     }
+
+    public void TakeHeath(double damage)
+    {
+        if (hp < maxhp)
+        {
+            hp += damage;
+        }
+        if (!IsSelected())
+        {
+            UpdateHPBar();
+        }
+    }
+
+
     void UpdateHPBar()
     {
-        HPbar.text = Convert.ToString(this.hp) + "/15";
+        HPbar.text = Convert.ToString(this.hp) + "/" + Convert.ToString(this.maxhp);
     }
 
     void UpdateUnitName()
@@ -127,7 +161,7 @@ public class UnitDo : MonoBehaviour
         selectionManager.selectedUnits.Remove(this);
         Destroy(gameObject);
         OnDeselect();
-
+        
     }
 
     private bool IsSelected()
