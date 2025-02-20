@@ -13,14 +13,18 @@ public class UnitDo : MonoBehaviour
     [SerializeField] public GameObject SelectObject;
     [SerializeField] private GameObject HPColorBar;
     [SerializeField] private float attackInterval = 1f;
-    [SerializeField] private int team_id = 1;
+    [SerializeField] public int team_id = 1;
+    private double repair_count = 10;
     private float lastAttackTime = 0f;
     private string unit_name = string.Empty;
     private bool CanDoDamage = false;
+    private bool CanDoExtraction = false;
+    private bool CanDoRepair = false;
     private bool CanDoHeath = false;
     private UnitDo targetUnit;
     private SelectionManager selectionManager;
     private ObjectLogic objectlogic;
+    private StructureLogic structurelogic;
 
     private void Start()
     {
@@ -58,9 +62,23 @@ public class UnitDo : MonoBehaviour
         {
             objectlogic = other.GetComponent<ObjectLogic>();
 
-            CanDoDamage = true;
+            CanDoExtraction = true;
         }
+        if (other.gameObject.CompareTag("Structure"))
+        {
+            structurelogic = other.GetComponent<StructureLogic>();
 
+            if (structurelogic.team_id != this.team_id)
+            {
+                CanDoDamage = true;
+            }
+
+            if (structurelogic.team_id == this.team_id || this.id_unit == 0 || structurelogic.hp != structurelogic.maxhp)
+            {
+                //Механика починки строителем
+                CanDoRepair = true;
+            }
+        }
         if (other.gameObject.CompareTag("Unit"))
         {      
             targetUnit = other.GetComponent<UnitDo>();
@@ -82,9 +100,12 @@ public class UnitDo : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Tree"))
         {
-            CanDoDamage = false;
+            CanDoExtraction = false;
         }
-
+        if (other.gameObject.CompareTag("Structure"))
+        {
+            CanDoRepair = false;
+        }
         if (other.gameObject.CompareTag("Unit"))
         {
             CanDoDamage = false;
@@ -102,18 +123,24 @@ public class UnitDo : MonoBehaviour
         if (CanDoDamage && targetUnit != null && Time.time - lastAttackTime >= attackInterval)
         {
             targetUnit.TakeDamage(damage);
-            Debug.Log(hp);
-            Debug.Log(targetUnit.hp);
+            Debug.Log("Unit hp(d): " + hp);
+            Debug.Log("Target Hp(d): " + targetUnit.hp);
             lastAttackTime = Time.time; // Обновляем время последней атаки
         }
 
-        if (CanDoHeath &&  targetUnit != null && Time.time - lastAttackTime >= attackInterval)
+        if (CanDoHeath &&  targetUnit != null && Time.time - lastAttackTime >= attackInterval && this.id_unit == 3)
         {
             targetUnit.TakeHeath(damage);
             lastAttackTime = Time.time;
         }
 
-        if (CanDoDamage && objectlogic != null && Time.time - lastAttackTime >= attackInterval)
+        if (CanDoRepair && structurelogic != null && Time.time - lastAttackTime >= attackInterval && this.id_unit == 0)
+        {
+            structurelogic.TakeRepair(repair_count);
+            lastAttackTime = Time.time;
+        }
+
+        if (CanDoExtraction && objectlogic != null && Time.time - lastAttackTime >= attackInterval && objectlogic.gameObject.CompareTag("Tree"))
         {
             objectlogic.TakeDamage(damage);
             lastAttackTime = Time.time; 

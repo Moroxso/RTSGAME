@@ -7,6 +7,7 @@ TagManager:
   - Unite
   - Unit
   - Tree
+  - Structure
   layers:
   - Default
   - TransparentFX
