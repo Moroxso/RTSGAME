@@ -7,9 +7,16 @@ using UnityEngine;
 public class ObjectLogic : MonoBehaviour
 {
 
-    [SerializeField] public TMP_Text ScoreText;
+    private ResourceLogic resourceLogic;
+    [SerializeField] private GameObject ResObjectLogic;
     [SerializeField] private double HPObject = 4;
-    private int treecount = 0;
+    [SerializeField] private int object_id = 1;
+
+    private void Start()
+    {
+        resourceLogic = ResObjectLogic.GetComponent<ResourceLogic>();
+    }
+
 
     public void TakeDamage(double damage)
     {
@@ -23,12 +30,23 @@ public class ObjectLogic : MonoBehaviour
     private void Die()
     {
         Destroy(gameObject);
-        treecount++;
-        UpdataScoreText();
-    }
-
-    void UpdataScoreText()
-    {
-        ScoreText.text = Convert.ToString(treecount);
+        switch (object_id) {
+            case 1:
+                resourceLogic.Tree++;
+                break;
+            case 2:
+                resourceLogic.Stone++;
+                break;
+            case 3:
+                resourceLogic.Gold++;
+                break;
+            case 4:
+                resourceLogic.Iron++;
+                break;
+            default:
+                //...
+                break;
+        }
+        resourceLogic.UpdateScoreText();
     }
 }

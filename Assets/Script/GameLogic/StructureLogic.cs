@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StructureLogic : MonoBehaviour
 {
@@ -15,11 +16,22 @@ public class StructureLogic : MonoBehaviour
     [SerializeField] public double hp = 100;
     [SerializeField] public double maxhp = 100;
     [SerializeField] public int team_id = 1;
+    [SerializeField] GameObject SpawnScript;
+    private Spawn spawn;
     private string structure_name = string.Empty;
+    public Button button1;
+    [SerializeField] GameObject unit;
+    [SerializeField] GameObject SpawnPoint;
+    private Transform newtransform;
+    [SerializeField] GameObject ResObjectLogic;
+    private ResourceLogic resourceLogic;
 
     private void Start()
     {
         determinant_id();
+        spawn = SpawnScript.GetComponent<Spawn>();
+        newtransform = SpawnPoint.GetComponent<Transform>();
+        resourceLogic = ResObjectLogic.GetComponent<ResourceLogic>();
     }
 
 
@@ -45,11 +57,36 @@ public class StructureLogic : MonoBehaviour
                 break;
         }
     }
-    public void TakeRepair(double damage)
+
+    public void StructureDoButton1()
+    {
+        if (resourceLogic.Tree > 0)
+        {
+            spawn.SpawnMetod(unit, newtransform.position, newtransform.rotation);
+            resourceLogic.Tree--;
+            resourceLogic.UpdateScoreText();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (resourceLogic.Tree > 0)
+        {
+            button1.interactable = true;
+        }
+        else if (resourceLogic.Tree <= 0)
+        {
+            button1.interactable = false;
+        }
+    }
+
+
+
+    public void TakeRepair(double repair)
     {
         if (hp < maxhp)
         {
-            hp += damage;
+            hp += repair;
         }
     }
 

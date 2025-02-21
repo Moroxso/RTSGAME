@@ -73,7 +73,7 @@ public class UnitDo : MonoBehaviour
                 CanDoDamage = true;
             }
 
-            if (structurelogic.team_id == this.team_id || this.id_unit == 0 || structurelogic.hp != structurelogic.maxhp)
+            if (structurelogic.team_id == this.team_id && this.id_unit == 0 && structurelogic.hp != structurelogic.maxhp)
             {
                 //Механика починки строителем
                 CanDoRepair = true;
@@ -88,7 +88,7 @@ public class UnitDo : MonoBehaviour
                 CanDoDamage = true;
             }
 
-            if (targetUnit.team_id == this.team_id || this.id_unit == 3 || targetUnit.hp != targetUnit.maxhp)
+            if (targetUnit.team_id == this.team_id && this.id_unit == 3 && targetUnit.hp != targetUnit.maxhp)
             {
                 //Механика целителя
                 CanDoHeath = true;
@@ -104,7 +104,11 @@ public class UnitDo : MonoBehaviour
         }
         if (other.gameObject.CompareTag("Structure"))
         {
-            CanDoRepair = false;
+            if (this.id_unit == 0)
+            {
+                CanDoRepair = false;
+            }
+            CanDoDamage = false;
         }
         if (other.gameObject.CompareTag("Unit"))
         {
