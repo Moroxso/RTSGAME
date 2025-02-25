@@ -1,40 +1,36 @@
-using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine;
 
 public class UnitMovement : MonoBehaviour
 {
     private NavMeshAgent agent;
+    private UnitDo unit;
 
     void Start()
     {
-        // Получаем компонент NavMeshAgent
         agent = GetComponent<NavMeshAgent>();
-
-        // Проверяем, что NavMeshAgent активен и находится на NavMesh
-        if (agent == null || !agent.isActiveAndEnabled)
-        {
-            Debug.LogWarning("NavMeshAgent is missing or not active on unit.");
-        }
+        unit = GetComponent<UnitDo>();
     }
 
     public void MoveTo(Vector3 position)
     {
         if (agent != null && agent.isActiveAndEnabled)
         {
-            // Проверяем, доступна ли целевая позиция на NavMesh
+            // Отключаем ИИ и перехватываем управление
+            UnitAI unitAI = GetComponent<UnitAI>();
+            if (unitAI != null)
+            {
+                unitAI.ResetTarget();
+            }
+
+            // Устанавливаем флаг ручного управления
+            unit.isManualControl = true;
+
+            // Движение к указанной точке
             if (NavMesh.SamplePosition(position, out NavMeshHit navHit, 1.0f, NavMesh.AllAreas))
             {
-                // Устанавливаем целевую позицию для NavMeshAgent
                 agent.SetDestination(navHit.position);
             }
-            else
-            {
-                Debug.LogWarning("Target position is not reachable on NavMesh.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("NavMeshAgent component is missing or not active on unit.");
         }
     }
 }

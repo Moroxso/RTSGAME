@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class UnitDo : MonoBehaviour
 {
+    [HideInInspector] public bool isManualControl = false;
     [SerializeField] public TMP_Text HPbar;
     [SerializeField] public TMP_Text Name;
-    [SerializeField] private double hp = 15;
+    [SerializeField] public double hp = 15;
     [SerializeField] private double maxhp = 15;
     [SerializeField] private double damage = 0.2;
     [SerializeField] private int id_unit = 1;
@@ -17,7 +18,7 @@ public class UnitDo : MonoBehaviour
     private double repair_count = 10;
     private float lastAttackTime = 0f;
     private string unit_name = string.Empty;
-    private bool CanDoDamage = false;
+    public bool CanDoDamage = false;
     private bool CanDoExtraction = false;
     private bool CanDoRepair = false;
     private bool CanDoHeath = false;
