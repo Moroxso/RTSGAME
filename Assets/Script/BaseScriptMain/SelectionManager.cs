@@ -7,6 +7,14 @@ public class SelectionManager : MonoBehaviour
     public List<UnitDo> selectedUnits = new List<UnitDo>(); // Список компонентов UnitDo
     private bool isSelecting = false;
     private Vector3 mouseStartPosition;
+    private UnitAI unitAI;
+
+    private void Start()
+    {
+        unitAI = GetComponent<UnitAI>();
+    }
+
+
 
     void Update()
     {
@@ -57,6 +65,7 @@ public class SelectionManager : MonoBehaviour
         // Перемещение юнитов (ПКМ)
         if (Input.GetMouseButtonDown(1) && selectedUnits.Count > 0)
         {
+            unitAI.isManualControl = true;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
             {

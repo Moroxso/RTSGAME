@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class UnitDo : MonoBehaviour
 {
-    [HideInInspector] public bool isManualControl = false;
     [SerializeField] public TMP_Text HPbar;
     [SerializeField] public TMP_Text Name;
     [SerializeField] public double hp = 15;
@@ -18,7 +17,7 @@ public class UnitDo : MonoBehaviour
     private double repair_count = 10;
     private float lastAttackTime = 0f;
     private string unit_name = string.Empty;
-    public bool CanDoDamage = false;
+    [HideInInspector] public bool CanDoDamage = false;
     private bool CanDoExtraction = false;
     private bool CanDoRepair = false;
     private bool CanDoHeath = false;

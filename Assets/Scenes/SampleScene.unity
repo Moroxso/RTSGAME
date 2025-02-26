@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641258, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2747,6 +2747,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
       propertyPath: id_unit
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
+      propertyPath: team_id
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
@@ -6076,7 +6080,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
       propertyPath: team_id
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
       propertyPath: ScoreText
@@ -6120,6 +6124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ccaacb73652e4dc4990c597dd092e730, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isManualControl: 1
   detectionRange: 15
   attackRange: 2
   groupFormationDistance: 5
@@ -7518,6 +7523,10 @@ PrefabInstance:
       objectReference: {fileID: 354828223}
     - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
       propertyPath: damage
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}
+      propertyPath: team_id
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7702654003458750300, guid: 4adc6cf7ec4849243b4bb3233bb56c07, type: 3}

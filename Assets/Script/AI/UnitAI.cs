@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
+using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 
 public class UnitAI : MonoBehaviour
 {
+    [HideInInspector] public bool isManualControl = false;
     public float detectionRange = 10f;
     public float attackRange = 2f;
     public float groupFormationDistance = 5f;
@@ -21,24 +23,25 @@ public class UnitAI : MonoBehaviour
 
     void Update()
     {
-        if (unit.team_id == 0 || unit.isManualControl) return;
-
-        // Проверяем, уничтожена ли текущая цель
-        if (targetEnemy != null && targetEnemy.hp <= 0)
+        if (isManualControl == false)
         {
-            ResetTarget();
+            // Проверяем, уничтожена ли текущая цель
+            if (targetEnemy == null)
+            {
+                ResetTarget();
+                FindEnemies();
+            }
+            else if (targetEnemy != null) {
+                
+                MoveAndAttack();
+            }
         }
-
-        FindEnemies();
-        MoveAndAttack();
     }
 
     public void ResetTarget()
     {
-        targetEnemy = null;
-        agent.isStopped = true;
         unit.CanDoDamage = false;
-        unit.isManualControl = false; // Возвращаем управление ИИ
+        isManualControl = false; // Возвращаем управление ИИ
     }
 
     void FindEnemies()
@@ -51,6 +54,7 @@ public class UnitAI : MonoBehaviour
         {
             if (enemy.team_id != unit.team_id && enemy.hp > 0)
             {
+                isManualControl = false;
                 float distance = Vector3.Distance(transform.position, enemy.transform.position);
                 if (distance < closestDistance)
                 {
@@ -65,7 +69,6 @@ public class UnitAI : MonoBehaviour
     {
         if (targetEnemy == null)
         {
-            agent.isStopped = true;
             unit.CanDoDamage = false;
             return;
         }
@@ -74,12 +77,10 @@ public class UnitAI : MonoBehaviour
 
         if (distanceToEnemy <= attackRange)
         {
-            agent.isStopped = true;
             unit.CanDoDamage = true;
         }
         else
         {
-            agent.isStopped = false;
             agent.SetDestination(targetEnemy.transform.position);
             unit.CanDoDamage = false;
         }
