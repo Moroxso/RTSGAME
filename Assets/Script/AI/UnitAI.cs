@@ -29,13 +29,13 @@ public class UnitAI : MonoBehaviour
             if (targetEnemy == null)
             {
                 ResetTarget();
-                FindEnemies();
             }
             else if (targetEnemy != null) {
                 
                 MoveAndAttack();
             }
         }
+        FindEnemies();
     }
 
     public void ResetTarget()

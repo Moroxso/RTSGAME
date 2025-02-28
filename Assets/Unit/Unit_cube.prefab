@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 550384863667105758}
   - component: {fileID: 1417581631138303249}
   - component: {fileID: 7702654003458750300}
+  - component: {fileID: 4752679313335560065}
   - component: {fileID: 835482965078781368}
   m_Layer: 3
   m_Name: Unit_cube
@@ -150,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 830346b2042fe154d8e8d7822e615016, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SelectObject: {fileID: 1584918671198297199, guid: 9682ea43b5fe865469cbcf514bd7ba45, type: 3}
 --- !u!114 &7702654003458750300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,12 +168,29 @@ MonoBehaviour:
   Name: {fileID: 3910297856386087542, guid: fcfa28f2d08393541831fcf50c9e1740, type: 3}
   hp: 15
   maxhp: 15
-  damage: 2
+  damage: 1
   id_unit: 1
   SelectObject: {fileID: 1584918671198297199, guid: 9682ea43b5fe865469cbcf514bd7ba45, type: 3}
   HPColorBar: {fileID: 347321753573078229, guid: 36882d24043e3e84b8a5730732db8b77, type: 3}
   attackInterval: 1
   team_id: 1
+  CanDoDamage: 0
+--- !u!114 &4752679313335560065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3421498607187484229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccaacb73652e4dc4990c597dd092e730, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isManualControl: 1
+  detectionRange: 15
+  attackRange: 2
+  groupFormationDistance: 5
 --- !u!195 &835482965078781368
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -261,6 +280,7 @@ GameObject:
   - component: {fileID: 886638383679267001}
   - component: {fileID: 4190846178819916803}
   - component: {fileID: 8264578459982123855}
+  - component: {fileID: 5434979548674741150}
   m_Layer: 0
   m_Name: UnitGUIStatus
   m_TagString: Untagged
@@ -334,6 +354,19 @@ MeshRenderer:
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!114 &8264578459982123855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5169180035955219093}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7383b28298d391540b8295a6d5ca0e16, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unite: {fileID: 3421498607187484229}
+--- !u!114 &5434979548674741150
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitDo : MonoBehaviour
 {
@@ -25,10 +26,12 @@ public class UnitDo : MonoBehaviour
     private SelectionManager selectionManager;
     private ObjectLogic objectlogic;
     private StructureLogic structurelogic;
+    private Image image;
 
     private void Start()
     {
         selectionManager = SelectObject.GetComponent<SelectionManager>();
+        image = HPColorBar.GetComponent<Image>();
         determinant_id();
         HPColorBar.gameObject.SetActive(false);
         Name.gameObject.SetActive(false);
@@ -180,6 +183,18 @@ public class UnitDo : MonoBehaviour
     void UpdateHPBar()
     {
         HPbar.text = Convert.ToString(this.hp) + "/" + Convert.ToString(this.maxhp);
+        if (this.hp <= this.maxhp)
+        {
+            image.color = Color.green;
+        }
+        if (this.hp <= (this.maxhp / 2))
+        {
+           image.color = Color.yellow;
+        }
+        if (this.hp <= (this.maxhp / 3))
+        {
+            image.color = Color.red; // Реализовать срезание хп (уменьшение панельки)
+        }
     }
 
     void UpdateUnitName()
