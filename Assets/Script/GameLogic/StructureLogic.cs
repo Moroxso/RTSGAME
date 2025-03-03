@@ -26,6 +26,9 @@ public class StructureLogic : MonoBehaviour
     [SerializeField] GameObject ResObjectLogic;
     private ResourceLogic resourceLogic;
 
+    [SerializeField] private float Interval = 5f;
+    private float lastTime = 0f;
+
     private void Start()
     {
         determinant_id();
@@ -70,13 +73,25 @@ public class StructureLogic : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (resourceLogic.Tree > 0)
+        if (structure_id == 0)
         {
-            button1.interactable = true;
+            if (resourceLogic.Tree > 0)
+            {
+                button1.interactable = true;
+            }
+            else if (resourceLogic.Tree <= 0)
+            {
+                button1.interactable = false;
+            }
         }
-        else if (resourceLogic.Tree <= 0)
+        if (structure_id == 1)
         {
-            button1.interactable = false;
+            if (Time.time - lastTime >= Interval)
+            {
+                resourceLogic.Bread++;
+                resourceLogic.UpdateScoreText();
+                lastTime = Time.time;
+            }
         }
     }
 

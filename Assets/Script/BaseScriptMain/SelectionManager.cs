@@ -55,7 +55,7 @@ public class SelectionManager : MonoBehaviour
                 {
                     GameObject clickedObject = hit.collider.gameObject;
                     UnitDo unit = clickedObject.GetComponentInParent<UnitDo>();
-
+                    StructureLogic structure = clickedObject.GetComponentInParent<StructureLogic>();
 
                     if (unit != null)
                     {
@@ -66,6 +66,17 @@ public class SelectionManager : MonoBehaviour
                         else
                         {
                             SelectObject(unit.gameObject);
+                        }
+                    }
+                    if (structure != null)
+                    {
+                        if (selectedUnits.Contains(unit))
+                        {
+                            DeselectObject(structure.gameObject);
+                        }
+                        else
+                        {
+                            SelectObject(structure.gameObject);
                         }
                     }
                 }

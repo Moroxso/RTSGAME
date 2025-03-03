@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine;
-using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 
 public class UnitAI : MonoBehaviour
 {
