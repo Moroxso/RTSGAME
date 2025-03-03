@@ -14,7 +14,7 @@ public class SelectionManager : MonoBehaviour
     void Update()
     {
         selectedUnits.RemoveAll(obj => obj == null || !obj.gameObject.activeInHierarchy);
-
+        ifSelectButNotCollection();
 
         // Начало выделения области
         if (Input.GetMouseButtonDown(0))
@@ -108,10 +108,6 @@ public class SelectionManager : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
-        ifSelectButNotCollection();
-    }
 
 
 

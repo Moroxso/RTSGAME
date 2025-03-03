@@ -21,7 +21,7 @@ public class UnitAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         if (isManualControl == false)
         {
