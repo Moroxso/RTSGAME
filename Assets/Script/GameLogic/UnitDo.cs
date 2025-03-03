@@ -1,5 +1,6 @@
 using System;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -27,6 +28,7 @@ public class UnitDo : MonoBehaviour
     private ObjectLogic objectlogic;
     private StructureLogic structurelogic;
     private Image image;
+    public bool Select = false;
 
     private void Start()
     {
@@ -217,6 +219,7 @@ public class UnitDo : MonoBehaviour
 
     public void OnSelect()
     {
+        Select = true;
         HPColorBar.gameObject.SetActive(true);
         Name.gameObject.SetActive(true);
         UpdateHPBar();
@@ -225,6 +228,7 @@ public class UnitDo : MonoBehaviour
 
     public void OnDeselect()
     {
+        Select = false;
         HPColorBar.gameObject.SetActive(false);
         Name.gameObject.SetActive(false);
     }

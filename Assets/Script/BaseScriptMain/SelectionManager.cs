@@ -2,22 +2,26 @@ using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class SelectionManager : MonoBehaviour
 {
     public List<UnitDo> selectedUnits = new List<UnitDo>(); // Список компонентов UnitDo
     private bool isSelecting = false;
     private Vector3 mouseStartPosition;
+    private bool hasMoved = false; // Флаг для отслеживания движения мыши
 
     void Update()
     {
-        selectedUnits.RemoveAll(obj => obj == null);
+        selectedUnits.RemoveAll(obj => obj == null || !obj.gameObject.activeInHierarchy);
+
 
         // Начало выделения области
         if (Input.GetMouseButtonDown(0))
         {
             isSelecting = true;
             mouseStartPosition = Input.mousePosition;
+            hasMoved = false; // Сбрасываем флаг движения мыши
 
             if (!Input.GetKey(KeyCode.LeftControl) && !Input.GetKey(KeyCode.LeftShift))
             {
@@ -25,48 +29,65 @@ public class SelectionManager : MonoBehaviour
             }
         }
 
+        // Отслеживание движения мыши
+        if (isSelecting && Input.GetMouseButton(0))
+        {
+            if (Vector3.Distance(mouseStartPosition, Input.mousePosition) > 5f) // Порог движения мыши
+            {
+                hasMoved = true;
+            }
+        }
+
         // Завершение выделения области
         if (Input.GetMouseButtonUp(0))
         {
-            isSelecting = false;
-            SelectUnitsInRectangle();
-        }
-
-        // Одиночный клик
-        if (Input.GetMouseButtonDown(0) && !isSelecting)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
+            if (hasMoved)
             {
-                GameObject clickedObject = hit.collider.gameObject;
-                UnitDo unit = clickedObject.GetComponent<UnitDo>();
+                SelectUnitsInRectangle();
+            }
+            else
+            {
+                // Одиночный клик
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
 
-                if (unit != null)
+                if (Physics.Raycast(ray, out hit))
                 {
-                    if (selectedUnits.Contains(unit))
+                    GameObject clickedObject = hit.collider.gameObject;
+                    UnitDo unit = clickedObject.GetComponentInParent<UnitDo>();
+
+
+                    if (unit != null)
                     {
-                        DeselectObject(clickedObject);
-                    }
-                    else
-                    {
-                        SelectObject(clickedObject);
+                        if (selectedUnits.Contains(unit))
+                        {
+                            DeselectObject(unit.gameObject);
+                        }
+                        else
+                        {
+                            SelectObject(unit.gameObject);
+                        }
                     }
                 }
             }
+
+            isSelecting = false;
         }
 
         // Перемещение юнитов (ПКМ)
         if (Input.GetMouseButtonDown(1) && selectedUnits.Count > 0)
         {
-            
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, 1000f))
             {
                 float radius = 2f;
                 for (int i = 0; i < selectedUnits.Count; i++)
                 {
+                    if (selectedUnits[i] == null || !selectedUnits[i].gameObject.activeInHierarchy)
+                    {
+                        continue; // Пропускаем неактивные или уничтоженные объекты
+                    }
+
                     NavMeshAgent agent = selectedUnits[i].GetComponent<NavMeshAgent>();
                     if (agent != null && agent.isActiveAndEnabled)
                     {
@@ -82,17 +103,38 @@ public class SelectionManager : MonoBehaviour
                 }
             }
         }
+
+
+
     }
+
+    private void FixedUpdate()
+    {
+        ifSelectButNotCollection();
+    }
+
+
+
+    void ifSelectButNotCollection()
+    {
+        if (selectedUnits != null)
+        {
+            for (int i = 0; i < selectedUnits.Count; i++)
+            {
+                UnitDo unit = selectedUnits[i].GetComponent<UnitDo>();
+                if (unit.Select == false)
+                {
+                    selectedUnits.Remove(unit);
+                }
+            }
+        }
+    }
+
 
     void SelectUnitsInRectangle()
     {
         Vector3 mouseEndPosition = Input.mousePosition;
-        Rect selectionRect = new Rect(
-            mouseStartPosition.x,
-            Screen.height - mouseStartPosition.y,
-            mouseEndPosition.x - mouseStartPosition.x,
-            -(mouseEndPosition.y - mouseStartPosition.y)
-        );
+        Rect selectionRect = GetScreenRect(mouseStartPosition, mouseEndPosition);
 
         foreach (UnitDo unit in FindObjectsOfType<UnitDo>()) // Только юниты
         {
@@ -150,6 +192,8 @@ public class SelectionManager : MonoBehaviour
             DrawScreenRect(rect, new Color(0.8f, 0.8f, 0.95f, 0.25f));
             DrawScreenRectBorder(rect, 2, new Color(0.8f, 0.8f, 0.95f));
         }
+
+        selectedUnits.RemoveAll(obj => obj == null || !obj.gameObject.activeInHierarchy);
     }
 
     Rect GetScreenRect(Vector3 screenPosition1, Vector3 screenPosition2)
