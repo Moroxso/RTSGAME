@@ -19,7 +19,6 @@ public class StructureLogic : MonoBehaviour
     [SerializeField] GameObject SpawnScript;
     private Spawn spawn;
     private string structure_name = string.Empty;
-    public Button button1;
     [SerializeField] GameObject unit;
     [SerializeField] GameObject SpawnPoint;
     private Transform newtransform;
@@ -75,14 +74,6 @@ public class StructureLogic : MonoBehaviour
     {
         if (structure_id == 0)
         {
-            if (resourceLogic.Tree > 0)
-            {
-                button1.interactable = true;
-            }
-            else if (resourceLogic.Tree <= 0)
-            {
-                button1.interactable = false;
-            }
         }
         if (structure_id == 1)
         {
