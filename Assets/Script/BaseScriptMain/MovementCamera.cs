@@ -79,23 +79,23 @@ public class MovementCamera : MonoBehaviour
         RotationXZ();
 
         // Проверяем, находится ли курсор близко к краям экрана
-        if (mousePosition.x <= edgeThreshold)
+        if (mousePosition.x <= edgeThreshold || Input.GetKey(KeyCode.LeftArrow))
         {
             // Двигаем камеру влево
             transform.Translate(Vector3.left * _speed * 10f * Time.deltaTime);
         }
-        else if (mousePosition.x >= Screen.width - edgeThreshold)
+        else if (mousePosition.x >= Screen.width - edgeThreshold || Input.GetKey(KeyCode.RightArrow))
         {
             // Двигаем камеру вправо
             transform.Translate(Vector3.right * _speed * 10f * Time.deltaTime);
         }
-        if (mousePosition.y <= edgeThreshold)
+        if (mousePosition.y <= edgeThreshold || Input.GetKey(KeyCode.DownArrow))
         {
             // Двигаем камеру вниз
             transform.Translate(Vector3.down * _speed * speedX * Time.deltaTime);
             transform.Translate(Vector3.back * _speed * speedZ * Time.deltaTime);
         }
-        else if (mousePosition.y >= Screen.height - edgeThreshold)
+        else if (mousePosition.y >= Screen.height - edgeThreshold || Input.GetKey(KeyCode.UpArrow))
         {
             // Двигаем камеру вверх
             transform.Translate(Vector3.up * _speed * speedX * Time.deltaTime);

@@ -9,20 +9,20 @@ public class UnitDo : MonoBehaviour
     [SerializeField] public TMP_Text HPbar;
     [SerializeField] public TMP_Text Name;
     [SerializeField] public double hp = 15;
-    [SerializeField] private double maxhp = 15;
-    [SerializeField] private double damage = 0.2;
-    [SerializeField] private int id_unit = 1;
+    [SerializeField] public double maxhp = 15;
+    [SerializeField] public double damage = 0.2;
+    [SerializeField] public int id_unit = 1;
     [SerializeField] public GameObject SelectObject;
-    [SerializeField] private GameObject HPColorBar;
-    [SerializeField] private float attackInterval = 1f;
+    [SerializeField] public GameObject HPColorBar;
+    [SerializeField] public float attackInterval = 1f;
     [SerializeField] public int team_id = 1;
-    private double repair_count = 10;
+    public double repair_count = 10;
     private float lastAttackTime = 0f;
-    private string unit_name = string.Empty;
+    public string unit_name = string.Empty;
     [HideInInspector] public bool CanDoDamage = false;
     private bool CanDoExtraction = false;
     private bool CanDoRepair = false;
-    private bool CanDoHeath = false;
+    [HideInInspector] public bool CanDoHeath = false;
     private UnitDo targetUnit;
     private SelectionManager selectionManager;
     private ObjectLogic objectlogic;
@@ -32,11 +32,28 @@ public class UnitDo : MonoBehaviour
 
     private void Start()
     {
+        determinant_id();
         selectionManager = SelectObject.GetComponent<SelectionManager>();
         image = HPColorBar.GetComponent<Image>();
-        determinant_id();
         HPColorBar.gameObject.SetActive(false);
         Name.gameObject.SetActive(false);
+    }
+    private void LoadUnitData(string filePath)
+    {
+        // Загрузка данных из JSON
+        UnitData data = UnitData.LoadFromJson(filePath);
+
+        if (data != null)
+        {
+            // Применение загруженных данных
+            unit_name = data.unitName;
+            hp = data.hp;
+            maxhp = data.maxhp;
+            damage = data.damage;
+            id_unit = data.id_unit;
+            attackInterval = data.attackInterval;
+            repair_count = data.repair_count;
+        }
     }
 
     private void determinant_id()
@@ -44,16 +61,16 @@ public class UnitDo : MonoBehaviour
         switch (id_unit)
         {
             case 0:
-                unit_name = "Рабочий";
+                LoadUnitData("Assets/StreamingAssets/unitData_0.json");
                 break;
             case 1:
-                unit_name = "Рыцарь";
+                LoadUnitData("Assets/StreamingAssets/unitData_1.json");
                 break;
             case 2:
-                unit_name = "Лучник";
+                LoadUnitData("Assets/StreamingAssets/unitData_2.json");
                 break;
             case 3:
-                unit_name = "Целитель";
+                LoadUnitData("Assets/StreamingAssets/unitData_3.json");
                 break;
             default:
                 unit_name = "unit_id";
@@ -78,7 +95,7 @@ public class UnitDo : MonoBehaviour
                 CanDoDamage = true;
             }
 
-            if (structurelogic.team_id == this.team_id && this.id_unit == 0 && structurelogic.hp != structurelogic.maxhp)
+            if (structurelogic.team_id == this.team_id && this.id_unit == 0 && structurelogic.hp < structurelogic.maxhp)
             {
                 //Механика починки строителем
                 CanDoRepair = true;
@@ -93,7 +110,7 @@ public class UnitDo : MonoBehaviour
                 CanDoDamage = true;
             }
 
-            if (targetUnit.team_id == this.team_id && this.id_unit == 3 && targetUnit.hp != targetUnit.maxhp)
+            if (targetUnit.team_id == this.team_id && this.id_unit == 3 && targetUnit.hp < targetUnit.maxhp)
             {
                 //Механика целителя
                 CanDoHeath = true;
@@ -232,4 +249,6 @@ public class UnitDo : MonoBehaviour
         HPColorBar.gameObject.SetActive(false);
         Name.gameObject.SetActive(false);
     }
+
 }
+

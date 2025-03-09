@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4632690083571050079}
   - component: {fileID: 1817823702542749917}
   - component: {fileID: 6068394084016714399}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: HPCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}

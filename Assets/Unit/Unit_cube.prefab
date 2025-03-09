@@ -166,8 +166,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HPbar: {fileID: 6068394084016714399, guid: 4a64093ed322de24fa90083187722509, type: 3}
   Name: {fileID: 3910297856386087542, guid: fcfa28f2d08393541831fcf50c9e1740, type: 3}
-  hp: 15
-  maxhp: 15
+  hp: 45
+  maxhp: 45
   damage: 1
   id_unit: 1
   SelectObject: {fileID: 1584918671198297199, guid: 9682ea43b5fe865469cbcf514bd7ba45, type: 3}
@@ -175,6 +175,8 @@ MonoBehaviour:
   attackInterval: 1
   team_id: 1
   CanDoDamage: 0
+  CanDoHeath: 0
+  Select: 0
 --- !u!114 &4752679313335560065
 MonoBehaviour:
   m_ObjectHideFlags: 0

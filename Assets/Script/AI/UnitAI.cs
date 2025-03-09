@@ -12,6 +12,7 @@ public class UnitAI : MonoBehaviour
     private UnitDo unit;
     private NavMeshAgent agent;
     private UnitDo targetEnemy;
+    private UnitDo targetAlien;
     private List<UnitDo> allies = new List<UnitDo>();
 
     void Start()
@@ -33,6 +34,19 @@ public class UnitAI : MonoBehaviour
                 
                 MoveAndAttack();
             }
+
+            if (unit.id_unit == 3)
+            {
+                if (targetAlien == null && targetEnemy == null)
+                {
+                    ResetTarget();
+                    FindAliens();
+                }
+                else if (targetAlien != null && targetEnemy == null && targetAlien.hp < targetAlien.maxhp)
+                {
+                    MoveAndHeath();
+                }
+            }
         }
         FindEnemies();
     }
@@ -40,6 +54,7 @@ public class UnitAI : MonoBehaviour
     public void ResetTarget()
     {
         unit.CanDoDamage = false;
+        unit.CanDoHeath = false;
         isManualControl = false; // Возвращаем управление ИИ
     }
 
@@ -59,6 +74,27 @@ public class UnitAI : MonoBehaviour
                 {
                     closestDistance = distance;
                     targetEnemy = enemy;
+                }
+            }
+        }
+    }
+
+    void FindAliens()
+    {
+        UnitDo[] allUnits = FindObjectsOfType<UnitDo>();
+        float closestDistance = detectionRange;
+        targetAlien = null;
+
+        foreach (UnitDo alien in allUnits)
+        {
+            if (alien.team_id == unit.team_id && alien.hp > 0 && alien.hp < alien.maxhp && targetEnemy == null)
+            {
+                isManualControl = false;
+                float distance = Vector3.Distance(transform.position, alien.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    targetAlien = alien;
                 }
             }
         }
@@ -85,6 +121,27 @@ public class UnitAI : MonoBehaviour
         }
 
         GroupFormation();
+    }
+
+    void MoveAndHeath()
+    {
+        if (targetAlien == null)
+        {
+            unit.CanDoHeath = false;
+            return;
+        }
+
+        float distanceToEnemy = Vector3.Distance(transform.position, targetAlien.transform.position);
+
+        if (distanceToEnemy <= attackRange)
+        {
+            unit.CanDoHeath = true;
+        }
+        else
+        {
+            agent.SetDestination(targetAlien.transform.position);
+            unit.CanDoHeath = false;
+        }
     }
 
     void GroupFormation()

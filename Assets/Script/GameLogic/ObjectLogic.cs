@@ -8,15 +8,9 @@ public class ObjectLogic : MonoBehaviour
 {
 
     private ResourceLogic resourceLogic;
-    [SerializeField] private GameObject ResObjectLogic;
+    private GameObject ResObjectLogic;
     [SerializeField] private double HPObject = 4;
     [SerializeField] private int object_id = 1;
-
-    private void Start()
-    {
-        resourceLogic = ResObjectLogic.GetComponent<ResourceLogic>();
-    }
-
 
     public void TakeDamage(double damage)
     {
@@ -29,6 +23,8 @@ public class ObjectLogic : MonoBehaviour
 
     private void Die()
     {
+        ResObjectLogic = GameObject.Find("ResourceLogic");
+        resourceLogic = ResObjectLogic.GetComponent<ResourceLogic>();
         Destroy(gameObject);
         switch (object_id) {
             case 1:

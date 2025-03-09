@@ -27,7 +27,7 @@ public class StructureLogic : MonoBehaviour
 
     [SerializeField] private float Interval = 5f;
     private float lastTime = 0f;
-
+    public Transform UnitParent;
     private void Start()
     {
         determinant_id();
@@ -64,7 +64,7 @@ public class StructureLogic : MonoBehaviour
     {
         if (resourceLogic.Tree > 0)
         {
-            spawn.SpawnMetod(unit, newtransform.position, newtransform.rotation);
+            spawn.SpawnMetod(unit, newtransform.position, newtransform.rotation, UnitParent);
             resourceLogic.Tree--;
             resourceLogic.UpdateScoreText();
         }

@@ -1,0 +1,10 @@
+{
+    "unitName": "Лучник",
+    "hp": 15,
+    "maxhp": 15,
+    "damage": 5,
+    "id_unit": 2,
+    "attackInterval": 5,
+    "team_id": 1,
+    "repair_count": 0
+}

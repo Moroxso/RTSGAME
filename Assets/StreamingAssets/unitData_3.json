@@ -1,0 +1,10 @@
+{
+    "unitName": "Целитель",
+    "hp": 25,
+    "maxhp": 25,
+    "damage": 3,
+    "id_unit": 3,
+    "attackInterval": 5,
+    "team_id": 1,
+    "repair_count": 0
+}

@@ -1,0 +1,10 @@
+{
+    "unitName": "Рыцарь",
+    "hp": 20,
+    "maxhp": 20,
+    "damage": 2,
+    "id_unit": 1,
+    "attackInterval": 1.5,
+    "team_id": 1,
+    "repair_count": 0
+}

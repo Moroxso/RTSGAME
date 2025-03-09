@@ -1,0 +1,10 @@
+{
+    "unitName": "Рабочий",
+    "hp": 15,
+    "maxhp": 15,
+    "damage": 1,
+    "id_unit": 0,
+    "attackInterval": 2.0,
+    "team_id": 1,
+    "repair_count": 20
+}
